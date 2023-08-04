@@ -1,11 +1,19 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'pushplus · pushplus通知'
+description: 'PUSHPLUS通知'
+author: 'xhnmt'
+icon: 'message-square'
+color: 'blue'
 inputs:
-  milliseconds: # change this
+  token: 
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'token 可在 pushplus.plus 免费申请'
+  title:
+    required: false
+    description: '消息标题'
+  content:
+    required: true
+    description: '消息详细说明，默认HTML模板'
+    
 runs:
   using: 'node16'
   main: 'dist/index.js'

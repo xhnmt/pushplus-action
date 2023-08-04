@@ -1,105 +1,49 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+# PUSHPLUS微信推送 GitHub Action
 
-# Create a JavaScript Action using TypeScript
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.  
+## 使用方法
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+1. 将 token 添加到仓库的 Actions secrets 中，命名为 token 
 
-## Create an action from this template
+![](images/token.png)  
 
-Click the `Use this Template` and provide the new repo details for your action
+2. 在 workflow 中使用，例子如下：
 
-## Code in Main
-
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
-
-Install the dependencies  
-```bash
-$ npm install
+```yml
+- uses: josStorer/get-current-time@v2.0.2
+  id: current-time
+  with:
+    format: YYYYMMDD-HH
+    utcOffset: "+08:00"
+- uses: easychen/github-action-server-chan@v1.0.0
+  with:
+    sendkey: ${{ secrets.sendkey }}
+    title: "server酱Action更新啦 ${{ steps.current-time.outputs.formattedTime }}"
+    desp: "可以为空。支持Markdown"
+- uses: xhnmt/github-action-pushplus@v1.0.0
+  with:
+    token: ${{ secrets.token }}
+    title: "PUSHPLUS推送 ${{ steps.current-time.outputs.formattedTime }}"
+    content: "不能为空。默认HTML模板"
 ```
 
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
-```
+一个完整的例子：
 
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
-```
-
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder. 
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
+在仓库根目录新建 `.github/workflows/test.yml`，内容如下：
 
 ```yaml
-uses: ./
-with:
-  milliseconds: 1000
+name: 'build-test'
+on:
+  push:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PUSHPLUS推送通知
+        uses: xhnmt/github-action-pushplus@v1.0.0
+        with:
+          token: ${{ secrets.token }}
+          title: "我是一个小测试😝"
+          content: "我是一个小测试😝"
 ```
-
-See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
-
-## Usage:
-
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action

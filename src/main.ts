@@ -1,16 +1,22 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import axios from 'axios'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const token: string = core.getInput('token')
+    const title: string = core.getInput('title')
+    const content: string = core.getInput('content')
+    const url = 'http://www.pushplus.plus/send/'
+    // send request via urlencoded
+    const params = new URLSearchParams()
+    params.append('token', token)
+    params.append('title', title)
+    params.append('content', content)
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    axios.defaults.timeout = 10000
+    const ret = await axios.post(url, params)
 
-    core.setOutput('time', new Date().toTimeString())
+    return ret.data ?? false
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
