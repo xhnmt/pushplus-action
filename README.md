@@ -16,12 +16,7 @@
   with:
     format: YYYYMMDD-HH
     utcOffset: "+08:00"
-- uses: easychen/github-action-server-chan@v1.0.0
-  with:
-    sendkey: ${{ secrets.sendkey }}
-    title: "server酱Action更新啦 ${{ steps.current-time.outputs.formattedTime }}"
-    desp: "可以为空。支持Markdown"
-- uses: xhnmt/github-action-pushplus@v1.0.0
+- uses: xhnmt/pushplus-action@v1.0.0
   with:
     token: ${{ secrets.token }}
     title: "PUSHPLUS推送 ${{ steps.current-time.outputs.formattedTime }}"
@@ -41,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PUSHPLUS推送通知
-        uses: xhnmt/github-action-pushplus@v1.0.0
+        uses: xhnmt/pushplus-action@v1.0.0
         with:
           token: ${{ secrets.token }}
           title: "我是一个小测试😝"
